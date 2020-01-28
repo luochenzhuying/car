@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.car.mapper.IUsersMapper">
+
+	<insert id="insert">
+		insert into USERS (USERNAME, IDENTITY,
+		FULLNAME, SEX,
+		ADDRESS, PHONE, POSITION, USERLEVEL, USERPWD )
+		values
+		(#{userName},
+		#{identity}, #{fullName}, #{sex},
+		#{address}, #{phone}, #{position},
+		#{userLevel}, #{userPwd} )
+	</insert>
+
+	<select id="selectSize" resultType="int">
+		SELECT count(*) FROM USERS
+		<where>
+			<if test="userName != null and userName != ''">
+				and userName like '%${userName}%'
+			</if>
+			<if test="identity != null and identity != ''">
+				and identity like '%${identity}%'
+			</if>
+			<if test="fullName != null and fullName != ''">
+				and fullName like '%${fullName}%'
+			</if>
+			<if test="sex != null and sex != ''">
+				and sex = #{sex}
+			</if>
+			<if test="address != null and address != ''">
+				and address like '%${address}%'
+			</if>
+			<if test="phone != null and phone != ''">
+				and phone like '%${phone}%'
+			</if>
+			<if test="position != null and position != ''">
+				and position like '%${position}%'
+			</if>
+		</where>
+	</select>
+
+	<select id="selectByUsers" resultType="Users">
+	<![CDATA[ 
+		SELECT * FROM 
+		(SELECT ROWNUM rn,user2.* FROM (
+	]]>
+		SELECT userName,identity,fullName,sex,address,phone,position FROM
+		USERS
+		<where>
+			<if test="user.userName != null and user.userName != ''">
+				and userName like '%${user.userName}%'
+			</if>
+			<if test="user.identity != null and user.identity != ''">
+				and identity like '%${user.identity}%'
+			</if>
+			<if test="user.fullName != null and user.fullName != ''">
+				and fullName like '%'||#{user.fullName}||'%'
+			</if>
+			<if test="user.sex != null and user.sex != ''">
+				and sex = #{user.sex}
+			</if>
+			<if test="user.address != null and user.address != ''">
+				and address like '%${user.address}%'
+			</if>
+			<if test="user.phone != null and user.phone != ''">
+				and phone like '%${user.phone}%'
+			</if>
+			<if test="user.position != null and user.position != ''">
+				and position like '%${user.position}%'
+			</if>
+		</where>
+	<![CDATA[ 
+		) user2 WHERE ROWNUM <= #{endRow} ) 
+		WHERE rn > #{startRow}
+	]]>
+	</select>
+
+	<delete id="deleteUser">
+		DELETE FROM USERS WHERE username = #{userName}
+	</delete>
+
+	<select id="toUpdateUser" resultType="Users">
+		SELECT * FROM USERS WHERE
+		username = #{userName}
+	</select>
+
+	<update id="updateUser">
+		UPDATE USERS SET
+		IDENTITY = #{identity},
+		FULLNAME =
+		#{fullName},
+		SEX = #{sex},
+		ADDRESS = #{address},
+		PHONE = #{phone},
+		POSITION = #{position},
+		USERLEVEL = #{userLevel},
+		USERPWD = #{userPwd}
+		where USERNAME = #{userName}
+	</update>
+	
+	<select id="selectByPassword" resultType="Users">
+		select userName,identity,fullName,sex,address,phone,position,userLevel,userPwd from Users where userName = #{userName} and userPwd = #{userPwd}
+	</select>
+	
+	<select id="selectByIdentity" resultType="Users">
+		select userName,identity from Users where identity = #{identity}
+	</select>
+	
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-config.dtd">
+ 
+ <configuration>
+ 
+ 	<!-- 加载数据库连接属性文件 -->
+ 	<properties resource="resources/jdbc.properties"></properties>
+ 
+ 	<!-- 设置实体类别名 -->
+ 	<typeAliases>
+ 		<!-- 对同一包下统一使用简单类名为别名 -->
+ 		<package name="com.car.pojo"/>
+ 	</typeAliases>
+ 	
+ 	<!-- 配置运行环境 -->
+ 	<environments default="mysqlEM">
+ 		<environment id="mysqlEM">
+ 			<!-- 事务管理器 -->
+ 			<transactionManager type="JDBC"></transactionManager>
+ 			<!-- 数据源 -->
+ 			<dataSource type="POOLED">
+ 				<property name="driver" value="${jdbc.driver}"/>
+ 				<property name="url" value="${jdbc.url}"/>
+ 				<property name="username" value="${jdbc.username}"/>
+ 				<property name="password" value="${jdbc.password}"/>
+ 			</dataSource>
+ 		</environment>
+ 	</environments>
+ 	
+ 	<!-- 注册映射文件 -->
+ 	<mappers>
+		<package name="com.car.mapper"/>
+ 	</mappers>
+ 
+ </configuration>

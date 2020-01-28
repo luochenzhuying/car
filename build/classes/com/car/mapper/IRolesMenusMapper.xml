@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.car.mapper.IRolesMenusMapper" >
+  
+  <insert id="insert">
+  	INSERT INTO Roles_Menus(roleid,menuid) VALUES (#{roleId},#{menuId})
+  </insert>
+  
+  <select id="selectByRoleId" resultType="RolesMenusKey">
+  	SELECT * FROM Roles_Menus WHERE roleId = #{roleId}
+  </select>
+  
+  <delete id="removeRoleMenu">
+  	DELETE FROM Roles_Menus WHERE roleid = #{roleId}
+  </delete>
+</mapper>

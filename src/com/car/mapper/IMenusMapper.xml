@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.car.mapper.IMenusMapper" >
+  <select id="selectAll" resultType="Menus">
+  	SELECT * FROM menus where fatherId != 1 ORDER BY menuId
+  </select>
+  
+  <select id="selectByMenuId" resultType="Menus">
+  	SELECT * FROM menus where menuid = #{menuId}
+  </select>
+</mapper>

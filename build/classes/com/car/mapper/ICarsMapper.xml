@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.car.mapper.ICarsMapper">
+
+	<insert id="insert">
+		insert into CARS
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			CARNUMBER, CARTYPE, COLOR, PRICE, RENTPRICE, DEPOSIT, ISRENTING,
+			<if test="carDesc != null">
+				CARDESC,
+			</if>
+			<if test="carImg != null">
+				CARIMG,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			#{carNumber}, #{carType}, #{color}, #{price}, #{rentPrice}, #{deposit}, #{isRenting},
+			<if test="carDesc != null">
+				#{carDesc},
+			</if>
+			<if test="carImg != null">
+				#{carImg},
+			</if>
+		</trim>
+	</insert>
+
+	<select id="selectSize" resultType="int">
+		SELECT count(*) FROM Cars
+		<where>
+			<if test="carNumber != null and carNumber != ''">
+				and carNumber like '%${carNumber}%'
+			</if>
+			<if test="carType != null and carType != ''">
+				and carType like '%${carType}%'
+			</if>
+			<if test="color != null and color != ''">
+				and color like '%${color}%'
+			</if>
+			<if test="price > 0">
+				and price &lt;= #{price}
+			</if>
+			<if test="rentPrice > 0 ">
+				and rentPrice &lt;= #{rentPrice}
+			</if>
+			<if test="deposit > 0">
+				and deposit &lt;= #{deposit}
+			</if>
+			<if test="isRenting != null and isRenting != ''">
+				and isRenting = #{isRenting}
+			</if>
+		</where>
+	</select>
+
+	<select id="selectByCars" resultType="Cars">
+	<![CDATA[ 
+		SELECT * FROM 
+		(SELECT ROWNUM rn,car2.* FROM (
+	]]>
+		SELECT
+		carNumber,carType,color,price,rentPrice,deposit,isRenting,carDesc,carImg
+		FROM
+		Cars
+		<where>
+			<if test="car.carNumber != null and car.carNumber != ''">
+				and carNumber like '%${car.carNumber}%'
+			</if>
+			<if test="car.carType != null and car.carType != ''">
+				and carType like '%${car.carType}%'
+			</if>
+			<if test="car.color != null and car.color != ''">
+				and color like '%${car.color}%'
+			</if>
+			<if test="car.price > 0">
+				and price &lt;= #{car.price}
+			</if>
+			<if test="car.rentPrice > 0 ">
+				and rentPrice &lt;= #{car.rentPrice}
+			</if>
+			<if test="car.deposit > 0">
+				and deposit &lt;= #{car.deposit}
+			</if>
+			<if test="car.isRenting != null and car.isRenting != ''">
+				and isRenting = #{car.isRenting}
+			</if>
+		</where>
+	<![CDATA[ 
+		) car2 WHERE ROWNUM <= #{endRow} ) 
+		WHERE rn > #{startRow}
+	]]>
+	</select>
+
+	<delete id="deleteCar">
+		DELETE FROM Cars WHERE carNumber = #{carNumber}
+	</delete>
+
+	<select id="toUpdateCar" resultType="Cars">
+		SELECT * FROM Cars WHERE
+		carNumber = #{carNumber}
+	</select>
+
+	<update id="updateCar">
+		update CARS
+		<set>
+			<if test="carType != null">
+				CARTYPE = #{carType},
+			</if>
+			<if test="color != null">
+				COLOR = #{color},
+			</if>
+			<if test="price != null">
+				PRICE = #{price},
+			</if>
+			<if test="rentPrice != null">
+				RENTPRICE = #{rentPrice},
+			</if>
+			<if test="deposit != null">
+				DEPOSIT = #{deposit},
+			</if>
+			<if test="isRenting != null">
+				ISRENTING = #{isRenting},
+			</if>
+			<if test="carDesc != null">
+				CARDESC = #{carDesc},
+			</if>
+			<if test="carImg != null">
+				CARIMG = #{carImg},
+			</if>
+		</set>
+		where CARNUMBER = #{carNumber}
+	</update>
+
+	<select id="selectCars" resultType="Cars">
+		SELECT
+		carNumber,carType,color,price,rentPrice,deposit FROM Cars where
+		isRenting = '未出租'
+	</select>
+</mapper>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.car.mapper.ICustomersMapper">
+	<insert id="insert">
+		INSERT INTO CUSTOMERS (IDENTITY,CUSTNAME,SEX,ADDRESS,PHONE,CAREER)
+		VALUES (#{identity},#{custName},#{sex},#{address},#{phone},#{carEer})
+	</insert>
+
+	<select id="selectSize" resultType="int">
+		SELECT count(*) FROM Customers
+		<where>
+			<if test="identity != null and identity != ''">
+				and identity like '%${identity}%'
+			</if>
+			<if test="custName != null and custName != ''">
+				and custName like '%${custName}%'
+			</if>
+			<if test="sex != null and sex != ''">
+				and sex = #{sex}
+			</if>
+			<if test="address != null and address != ''">
+				and address like '%${address}%'
+			</if>
+			<if test="phone != null and phone != ''">
+				and phone like '%${phone}%'
+			</if>
+			<if test="carEer != null and carEer != ''">
+				and carEer like '%${carEer}%'
+			</if>
+		</where>
+	</select>
+
+	<select id="selectByCustomers" resultType="Customers">
+	<![CDATA[ 
+		SELECT * FROM 
+		(SELECT ROWNUM rn,cust2.* FROM (
+	]]>
+		SELECT identity,custName,sex,address,phone,carEer FROM
+		Customers
+		<where>
+			<if test="cust.identity != null and cust.identity != ''">
+				and identity like '%${cust.identity}%'
+			</if>
+			<if test="cust.custName != null and cust.custName != ''">
+				and custName like '%'||#{cust.custName}||'%'
+			</if>
+			<if test="cust.sex != null and cust.sex != ''">
+				and sex = #{cust.sex}
+			</if>
+			<if test="cust.address != null and cust.address != ''">
+				and address like '%${cust.address}%'
+			</if>
+			<if test="cust.phone != null and cust.phone != ''">
+				and phone like '%${cust.phone}%'
+			</if>
+			<if test="cust.carEer != null and cust.carEer != ''">
+				and carEer like '%${cust.carEer}%'
+			</if>
+		</where>
+	<![CDATA[ 
+		) cust2 WHERE ROWNUM <= #{endRow} ) 
+		WHERE rn > #{startRow}
+	]]>
+	</select>
+
+	<delete id="deleteCustomer">
+		DELETE FROM Customers WHERE identity = #{identity}
+	</delete>
+
+	<select id="toUpdateCustomer" resultType="Customers">
+		SELECT * FROM Customers WHERE
+		identity = #{identity}
+	</select>
+
+	<update id="updateCustomer">
+		UPDATE Customers SET
+		custName =
+		#{custName},
+		SEX = #{sex},
+		ADDRESS = #{address},
+		PHONE = #{phone},
+		carEer = #{carEer}
+		where identity = #{identity}
+	</update>
+	
+	<select id="selectByIdentity" resultType="Customers">
+		select identity,custName,sex,address,phone,carEer from Customers where identity = #{identity} 
+	</select>
+</mapper>

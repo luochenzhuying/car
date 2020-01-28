@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.car.mapper.IChecktableMapper">
+
+	<insert id="insert">
+		insert into CHECKTABLE (CHECKID, CHECKDATE, FIELD,
+		PROBLEM, PAYING, CHECKUSERID, RENTID)
+		values (#{checkId}, #{checkDate}, #{field},
+		#{problem}, #{paying}, #{checkUserId}, #{rentId})
+	</insert>
+	
+	<delete id="delectCheckByTableId">
+		DELETE FROM checktable WHERE rentId = #{rentId}
+	</delete>
+	
+	<select id="selectSize" resultType="int">
+		SELECT count(*) FROM CheckTable
+		<where>
+			<if test="checkId != null and checkId != ''">
+				and checkId like '%${checkId}%'
+			</if>
+			<if test="checkDate != null and checkDate != ''">
+				and checkDate = #{checkDate}
+			</if>
+			<if test="field != null and field != ''">
+				and field like '%${field}%'
+			</if>
+			<if test="problem != null and problem != ''">
+				and problem like '%${problem}%'
+			</if>
+			<if test="paying >= 0 and paying != null">
+				and paying = #{paying}
+			</if>
+			<if test="checkUserId != null and checkUserId != ''">
+				and checkUserId like '%${checkUserId}%'
+			</if>
+			<if test="rentId != null and rentId != ''">
+				and rentId like '%${rentId}%'
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectByChecks" resultType="CheckTable">
+	<![CDATA[ 
+		SELECT * FROM 
+		(SELECT ROWNUM rn,check2.* FROM (
+	]]>
+		SELECT checkId,checkDate,checkUserId FROM
+		CheckTable
+		<where>
+			<if test="check.checkId != null and check.checkId != ''">
+				and checkId like '%${check.checkId}%'
+			</if>
+			<if test="check.checkDate != null and check.checkDate != ''">
+				and checkDate = #{check.checkDate}
+			</if>
+			<if test="check.field != null and check.field != ''">
+				and field like '%${check.field}%'
+			</if>
+			<if test="check.problem != null and check.problem != ''">
+				and problem like '%${check.problem}%'
+			</if>
+			<if test="check.paying >= 0 and check.paying != null">
+				and paying = #{check.paying}
+			</if>
+			<if test="check.checkUserId != null and check.checkUserId != ''">
+				and checkUserId like '%${check.checkUserId}%'
+			</if>
+			<if test="check.rentId != null and check.rentId != ''">
+				and rentId like '%${check.rentId}%'
+			</if>
+		</where>
+	<![CDATA[ 
+		) check2 WHERE ROWNUM <= #{endRow} ) 
+		WHERE rn > #{startRow}
+	]]>
+	</select>
+	
+	<delete id="delectCheckByCheckId">
+		DELETE FROM checktable WHERE checkId = #{checkId}
+	</delete>
+	
+	<select id="selectCheckByCheckId" resultType="CheckTable">
+		SELECT * FROM Checktable
+		WHERE checkId = #{checkId}
+	</select>
+
+	<update id="updateReturn">
+		update CHECKTABLE
+		<set>
+			<if test="field != null and field != ''">
+				field = #{field},
+			</if>
+			<if test="problem != null and problem != ''">
+				problem = #{problem},
+			</if>
+			<if test="paying >= 0">
+				paying = #{paying},
+			</if>
+		</set>
+		where checkId = #{checkId}
+	</update>
+	
+	<select id="selectByUserId" resultType="CheckTable">
+		SELECT checkId,checkuserid FROM checktable WHERE checkUserId = #{checkUserId}
+	</select>
+</mapper>

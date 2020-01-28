@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.car.mapper.IRenttableMapper">
+
+	<insert id="insert">
+		insert into RENTTABLE (TABLEID, IMPREST,
+		SHOULDPAYPRICE, PRICE, BEGINDATE,
+		SHOULDRETURNDATE, RENTFLAG, CUSTID, CARID, USERID)
+		values (#{tableId}, #{imprest},
+		#{shouldPayPrice}, #{price}, #{beginDate},
+		#{shouldReturnDate},
+		#{rentFlag}, #{custId}, #{carId}, #{userId})
+	</insert>
+
+	<select id="selectByTableId" resultType="RentTable">
+		SELECT * FROM renttable
+		WHERE tableId = #{tableId}
+	</select>
+
+	<update id="updateRent">
+		update RENTTABLE
+		<set>
+			<if test="imprest >= 0">
+				IMPREST = #{imprest},
+			</if>
+			<if test="shouldPayPrice >= 0">
+				SHOULDPAYPRICE = #{shouldPayPrice},
+			</if>
+			<if test="price >= 0">
+				PRICE = #{price},
+			</if>
+			<if test="beginDate != null">
+				BEGINDATE = #{beginDate},
+			</if>
+			<if test="shouldReturnDate != null">
+				SHOULDRETURNDATE = #{shouldReturnDate},
+			</if>
+			<if test="returnDate != null">
+				RETURNDATE = #{returnDate},
+			</if>
+			<if test="rentFlag != null">
+				RENTFLAG = #{rentFlag},
+			</if>
+			<if test="custId != null">
+				CUSTID = #{custId},
+			</if>
+			<if test="carId != null">
+				CARID = #{carId},
+			</if>
+			<if test="userId != null">
+				USERID = #{userId},
+			</if>
+		</set>
+		where TABLEID = #{tableId}
+	</update>
+	
+	<select id="selectSize" resultType="int">
+		SELECT count(*) FROM RentTable
+		<where>
+			<if test="tableId != null and tableId != ''">
+				and tableId like '%${tableId}%'
+			</if>
+			<if test="beginDate != null and beginDate != ''">
+				and beginDate = #{beginDate}
+			</if>
+			<if test="shouldReturnDate != null and shouldReturnDate != ''">
+				and shouldReturnDate = #{shouldReturnDate}
+			</if>
+			<if test="returnDate != null and returnDate != ''">
+				and returnDate = #{returnDate}
+			</if>
+			<if test="rentFlag != null">
+				and rentFlag = #{rentFlag}
+			</if>
+			<if test="custId != null and custId != ''">
+				and custId like '%${custId}%'
+			</if>
+			<if test="carId != null and carId != ''">
+				and carId like '%${carId}%'
+			</if>
+			<if test="userId != null and userId != ''">
+				and userId like '%${userId}%'
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectByRents" resultType="RentTable">
+	<![CDATA[ 
+		SELECT * FROM 
+		(SELECT ROWNUM rn,rent2.* FROM (
+	]]>
+		SELECT tableId,beginDate,shouldReturnDate,returnDate,custId,carId,rentFlag,userId FROM
+		RentTable
+		<where>
+			<if test="rent.tableId != null and rent.tableId != ''">
+				and tableId like '%${rent.tableId}%'
+			</if>
+			<if test="rent.beginDate != null and rent.beginDate != ''">
+				and beginDate = #{rent.beginDate}
+			</if>
+			<if test="rent.shouldReturnDate != null and rent.shouldReturnDate != ''">
+				and shouldReturnDate = #{rent.shouldReturnDate}
+			</if>
+			<if test="rent.returnDate != null and rent.returnDate != ''">
+				and returnDate = #{rent.returnDate}
+			</if>
+			<if test="rent.rentFlag != null">
+				and rentFlag = #{rent.rentFlag}
+			</if>
+			<if test="rent.custId != null and rent.custId != ''">
+				and custId like '%${rent.custId}%'
+			</if>
+			<if test="rent.carId != null and rent.carId != ''">
+				and carId like '%${rent.carId}%'
+			</if>
+			<if test="rent.userId != null and rent.userId != ''">
+				and userId like '%${rent.userId}%'
+			</if>
+		</where>
+	<![CDATA[ 
+		) rent2 WHERE ROWNUM <= #{endRow} ) 
+		WHERE rn > #{startRow}
+	]]>
+	</select>
+	
+	<delete id="deleteRent">
+		DELETE FROM RentTable WHERE tableId = #{tableId}
+	</delete>
+	
+	<select id="selectBycarId" resultType="RentTable">
+		select tableId,carId from renttable where carId = #{carId}
+	</select>
+	
+	<select id="selectByCustId" resultType="RentTable">
+		select tableId,custId from renttable where custId = #{custId}
+	</select>
+
+	<select id="selectByUserId" resultType="RentTable">
+		select tableId,userId from renttable where userId = #{userId}
+	</select>
+
+</mapper>
